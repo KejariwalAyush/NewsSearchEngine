@@ -79,17 +79,4 @@ public class UrlDetails {
 		}
 
 	}
-
-	// public String getURL() { return url; }
-	// public void setURL(String value) { this.url = value; }
-	//
-	// public String getContent() { return content; }
-	// public void setContent(String value) { this.content = value; }
-	// public HashSet<String> getUnique_words() {
-	// return unique_words;
-	// }
-	// public void setUnique_words(HashSet<String> unique_words) {
-	// this.unique_words = unique_words;
-	// }
-
 }

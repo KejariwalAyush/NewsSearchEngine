@@ -1,11 +1,10 @@
 package spellCheck;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class SpellCheck {
 
-    private  MyDictionary dict;
+    private MyDictionary dict;
     final static String filePath = "words.txt";
     final static char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
@@ -27,7 +26,7 @@ public class SpellCheck {
         return sb.toString();
     }
 
-    private  ArrayList<String> makeSuggestions(String input) {
+    private ArrayList<String> makeSuggestions(String input) {
         ArrayList<String> toReturn = new ArrayList<>();
         toReturn.addAll(charAppended(input));
         toReturn.addAll(charMissing(input));
@@ -35,23 +34,23 @@ public class SpellCheck {
         return toReturn;
     }
 
-    private  ArrayList<String> charAppended(String input) {
+    private ArrayList<String> charAppended(String input) {
         ArrayList<String> toReturn = new ArrayList<>();
         for (char c : alphabet) {
             String atBack = input + c;
-            for(int i=0;i<input.length();i++) {
-            	String temp = input.substring(0, i) + c + input.substring(i);
-            	if (dict.contains(temp)) 
+            for (int i = 0; i < input.length(); i++) {
+                String temp = input.substring(0, i) + c + input.substring(i);
+                if (dict.contains(temp))
                     toReturn.add(temp);
             }
-            if (dict.contains(atBack)) 
+            if (dict.contains(atBack))
                 toReturn.add(atBack);
-            
+
         }
         return toReturn;
     }
 
-    private  ArrayList<String> charMissing(String input) {
+    private ArrayList<String> charMissing(String input) {
         ArrayList<String> toReturn = new ArrayList<>();
 
         int len = input.length() - 1;
@@ -73,7 +72,7 @@ public class SpellCheck {
         return toReturn;
     }
 
-    private  ArrayList<String> charsSwapped(String input) {
+    private ArrayList<String> charsSwapped(String input) {
         ArrayList<String> toReturn = new ArrayList<>();
 
         for (int i = 0; i < input.length() - 1; i++) {
@@ -87,54 +86,55 @@ public class SpellCheck {
         }
         return toReturn;
     }
-    
-//    void run() {
-//        Scanner scan = new Scanner(System.in);
-//        String input;
-//
-//        while (true) {
-//            System.out.print("\n-------Enter a word: ");
-//            input = scan.nextLine();
-//            if (input.equals(""))
-//                break;
-//
-//            if (dict.contains(input)) {
-//                System.out.println("\n" + input + " is spelled correctly");
-//                System.out.println(printSuggestions(input));
-//            } else {
-//                System.out.print("is not spelled correctly, ");
-//                System.out.println(printSuggestions(input));
-//            }
-//        }
-//        scan.close();
-//    }
-    
-    public  String validate(String input) {
-    	/*
-    	 * This function checks if the input given is valid or not.
-    	 * if it is just an empty input the while loop will break and return null
-    	 * if it is a word contained in the dictionary that word will be returned
-    	 * otherwise we assume that a spelling mistake has been made and the
-    	 * "makeSuggestions" method is called.
-    	 */
-    	while(input != null) {
-    		 if (input.equals(""))
-                 break;
-    		 if (dict.contains(input)) {
-                 return input;
-             } else {
-            	ArrayList<String> sug = makeSuggestions(input);
-            	if(sug.size()>0)
-            	 return sug.get(0);
-            	else return input;
-             }
-    	}
-    	return null;
+
+    // void run() {
+    // Scanner scan = new Scanner(System.in);
+    // String input;
+    //
+    // while (true) {
+    // System.out.print("\n-------Enter a word: ");
+    // input = scan.nextLine();
+    // if (input.equals(""))
+    // break;
+    //
+    // if (dict.contains(input)) {
+    // System.out.println("\n" + input + " is spelled correctly");
+    // System.out.println(printSuggestions(input));
+    // } else {
+    // System.out.print("is not spelled correctly, ");
+    // System.out.println(printSuggestions(input));
+    // }
+    // }
+    // scan.close();
+    // }
+
+    public String validate(String input) {
+        /*
+         * This function checks if the input given is valid or not. if it is just an
+         * empty input the while loop will break and return null if it is a word
+         * contained in the dictionary that word will be returned otherwise we assume
+         * that a spelling mistake has been made and the "makeSuggestions" method is
+         * called.
+         */
+        while (input != null) {
+            if (input.equals(""))
+                break;
+            if (dict.contains(input)) {
+                return input;
+            } else {
+                ArrayList<String> sug = makeSuggestions(input);
+                if (sug.size() > 0)
+                    return sug.get(0);
+                else
+                    return input;
+            }
+        }
+        return null;
     }
 
-//    public static void main(String[] args) {
-//        SpellCheck sc = new SpellCheck();
-//        sc.run();
-//    }
+    // public static void main(String[] args) {
+    // SpellCheck sc = new SpellCheck();
+    // sc.run();
+    // }
 
 }

@@ -1,6 +1,6 @@
 package searchEngine;
 
-class Node<UrlData> {
+class Node<T> {
     UrlData data;
     Node<UrlData> left, right;
 }
@@ -20,7 +20,7 @@ class BST {
     }
 
     public static Node<UrlData> insert(Node<UrlData> node, UrlData val) {
-        if (node==null || node.data == null) {
+        if (node == null || node.data == null) {
             return (createNode(val));
         }
 
