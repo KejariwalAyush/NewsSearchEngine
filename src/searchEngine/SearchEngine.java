@@ -48,8 +48,8 @@ public class SearchEngine {
 			}
 
 			String correctedQuery = spellCheckSentence(query);
-			if (!query.trim().equalsIgnoreCase(correctedQuery))
-				System.out.println("Did you mean: " + correctedQuery);
+			// if (!query.trim().equalsIgnoreCase(correctedQuery))
+			// System.out.println("Did you mean: " + correctedQuery);
 
 			System.out.println("Searching for: " + correctedQuery);
 			System.out.println();
@@ -58,7 +58,10 @@ public class SearchEngine {
 				// if (search(correctedQuery, ud) >= 40)
 				// System.out.println(ud.url);
 			}
-			printBST(node);
+			if (node == null || node.data == null)
+				System.out.println("Sorry No results Found!");
+			else
+				printBST(node);
 
 			System.out.println("Search completed.\n");
 		}
@@ -84,7 +87,7 @@ public class SearchEngine {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String line;
-			while ((line = reader.readLine()) != null && data.size() < 20) {
+			while ((line = reader.readLine()) != null && data.size() < 200) {
 				data.add(line);
 			}
 			reader.close();
@@ -98,7 +101,7 @@ public class SearchEngine {
 
 	private static void search(String query, UrlDetails ud) {
 		HashSet<String> temp = new HashSet<String>();
-		if (ud.title.toLowerCase().contains(query.toLowerCase())) {
+		if (ud.title != null && ud.title.toLowerCase().contains(query.toLowerCase())) {
 			node = BST.insert(node, new UrlData(ud.url, ud.title, 50));
 			System.out.println(node.data.url);
 			for (String url : ud.innerUrls) {
@@ -115,7 +118,7 @@ public class SearchEngine {
 		if (ud.unique_words != null)
 			temp.addAll(ud.unique_words);
 		for (String string : query.toLowerCase().split(" ")) {
-			if (ud.title.toLowerCase().contains(string)) {
+			if (ud.title != null && ud.title.toLowerCase().contains(string)) {
 				node = BST.insert(node, new UrlData(ud.url, ud.title, 40));
 				return;
 			}
@@ -153,9 +156,9 @@ public class SearchEngine {
 	}
 
 	private static void printBST(Node<UrlData> node) {
-		if (node == null) {
+		if (node == null)
 			return;
-		}
+
 		printBST(node.right);
 		System.out.print(node.data + "\n");
 		printBST(node.left);
