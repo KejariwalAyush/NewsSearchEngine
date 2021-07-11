@@ -6,7 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Kejariwal/jsoup-1.13.1.jar">
+	<classpathentry kind="lib" path="D:\AD projecct- search engine\SearchEngine\jsoup-1.13.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
