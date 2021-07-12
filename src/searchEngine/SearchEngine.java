@@ -19,7 +19,7 @@ public class SearchEngine {
 		Scanner sc = new Scanner(System.in);
 
 		System.out.println("Intializing serach engine.....");
-		HashSet<String> sites = importData("sites.txt");
+		HashSet<String> sites = importData("sites.txt", 20);
 		HashSet<UrlDetails> database = new HashSet<>();
 		long startTime = System.currentTimeMillis();
 		for (String site : sites) {
@@ -46,15 +46,13 @@ public class SearchEngine {
 			}
 
 			String correctedQuery = spellCheckSentence(query);
-			// if (!query.trim().equalsIgnoreCase(correctedQuery))
-			// System.out.println("Did you mean: " + correctedQuery);
+			if (!query.trim().equalsIgnoreCase(correctedQuery.trim()))
+				System.out.println("Did you mean: " + correctedQuery);
 
 			System.out.println("Searching for: " + correctedQuery);
 			System.out.println();
 			for (UrlDetails ud : database) {
 				search(query, ud);
-				// if (search(correctedQuery, ud) >= 40)
-				// System.out.println(ud.url);
 			}
 			if (node == null || node.data == null)
 				System.out.println("Sorry No results Found!");
@@ -80,14 +78,14 @@ public class SearchEngine {
 		return manipulatedQuery.toString();
 	}
 
-	private static HashSet<String> importData(String filePath) {
+	private static HashSet<String> importData(String filePath, int dataSize) {
 		HashSet<String> data = new HashSet<>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			String line;
-			while ((line = reader.readLine()) != null && data.size() < 200) {
+			while ((line = reader.readLine()) != null && (dataSize == 0 || data.size() < dataSize))
 				data.add(line);
-			}
+
 			reader.close();
 			return data;
 		} catch (IOException ioe) {
@@ -101,7 +99,6 @@ public class SearchEngine {
 		HashSet<String> temp = new HashSet<String>();
 		if (ud.title != null && ud.title.toLowerCase().contains(query.toLowerCase())) {
 			node = BST.insert(node, new UrlData(ud.url, ud.title, 50));
-			System.out.println(node.data.url);
 			for (String url : ud.innerUrls) {
 				Document docs;
 				try {

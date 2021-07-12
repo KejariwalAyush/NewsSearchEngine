@@ -7,7 +7,7 @@ class UrlData {
 
     UrlData(String url, String title, int p) {
         this.points = p;
-        this.title = title;
+        this.title = title == null ? "No Title" : title;
         this.url = url;
     }
 

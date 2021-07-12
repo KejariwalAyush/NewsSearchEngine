@@ -7,11 +7,6 @@ class Node<T> {
 
 class BST {
 
-    // BST() {
-    // createNode(new UrlData("https://github.com/KejariwalAyush", "Ayush
-    // Kejariwal", 0));
-    // }
-
     public static Node<UrlData> createNode(UrlData k) {
         Node<UrlData> n = new Node<UrlData>();
         n.data = k;
