@@ -23,10 +23,10 @@ public class UrlDetails {
 	private MyDictionary dict;
 	private final static String filePath = "stopwords.txt";
 
-	UrlDetails(String url) {
+	public UrlDetails(String url) {
 		this.url = url;
 		this.content = webCrawler(url);
-		this.unique_words = getUniqueWords(this.content);
+		this.unique_words = this.content != null ? getUniqueWords(this.content) : null;
 		this.innerUrls = new HashSet<>();
 	}
 
@@ -48,7 +48,7 @@ public class UrlDetails {
 					}
 			}
 			return text;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// e.printStackTrace();
 			return null;
 		}
