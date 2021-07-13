@@ -11,6 +11,7 @@ import spellCheck.SpellCheck;
 
 public class SearchEngine {
 	private static Node<UrlData> node;
+	private static int maxPts = Integer.MAX_VALUE;
 
 	public static void main(String[] args) {
 
@@ -39,6 +40,7 @@ public class SearchEngine {
 
 			System.out.println("Searching for: " + correctedQuery);
 			System.out.println();
+			correctedQuery = correctedQuery + " " + query;
 			for (UrlDetails ud : database) {
 				search(query, ud);
 			}
@@ -47,7 +49,8 @@ public class SearchEngine {
 			else
 				printBST(node);
 
-			System.out.println("Search completed.\n");
+			System.out.println("Search completed.");
+			System.out.println("-------------------------------------------------------------");
 		}
 
 		sc.close();
@@ -69,13 +72,13 @@ public class SearchEngine {
 	private static void search(String query, UrlDetails ud) {
 		HashSet<String> temp = new HashSet<String>();
 		if (ud.title != null && ud.title.toLowerCase().contains(query.toLowerCase())) {
-			node = BST.insert(node, new UrlData(ud.url, ud.title, 50));
+			node = BST.insert(node, new UrlData(ud.url, ud.title, maxPts));
 			for (String url : ud.innerUrls) {
 				Document docs;
 				try {
 					docs = Jsoup.connect(url).get();
 					if (docs.title().toLowerCase().contains(query.toLowerCase()))
-						node = BST.insert(node, new UrlData(url, docs.title(), 50));
+						node = BST.insert(node, new UrlData(url, docs.title(), maxPts - 500));
 				} catch (IOException e) {
 				}
 			}
@@ -87,6 +90,17 @@ public class SearchEngine {
 			if (ud.title != null && ud.title.toLowerCase().contains(string)) {
 				node = BST.insert(node, new UrlData(ud.url, ud.title, 40));
 				return;
+			}
+		}
+		for (String url : ud.innerUrls) {
+			if (url.contains(query)) {
+				Document docs;
+				try {
+					docs = Jsoup.connect(url).get();
+					if (docs.title().toLowerCase().contains(query.toLowerCase()))
+						node = BST.insert(node, new UrlData(url, docs.title(), maxPts - 1000));
+				} catch (IOException e) {
+				}
 			}
 		}
 		int x = 0;

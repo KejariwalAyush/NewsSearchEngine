@@ -1,6 +1,5 @@
 package data;
 
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -11,44 +10,64 @@ import org.jsoup.select.*;
 import searchEngine.UrlDetails;
 
 public class LoadData {
+    static int dataCount = 1000;
+
     public static HashSet<UrlDetails> getData() {
 
         // HashSet<String> sites = importData("sites.txt", 0);
         HashSet<UrlDetails> database = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
-        String[] news = { "https://news.google.com/topstories", "https://www.bbc.com/", "https://edition.cnn.com/",
-                "https://www.nbcnews.com/", };
-        int in = 0;
-        // Scanner sc = new Scanner(System.in);
-        // System.out.println("Select Source of News:");
-        // for (int i = 0; i < news.length; i++)
-        // System.out.println(i + ": " + news[i]);
-        // in = sc.nextInt();
-        // // sc.nextLine();
-        // sc.close();
-        // if (in > news.length && in <= 0)
-        // in = 0;
+        String[] news = { "https://news.google.com/topstories", "https://www.bbc.com/", "https://edition.cnn.com/" };
+        // int in = 0;
 
-        HashSet<String> urls = getLinks(news[in]);
         HashSet<String> inUrls = new HashSet<>();
 
-        for (String s : urls) {
-            inUrls.add(s);
-            if (inUrls.size() < 1000)
-                inUrls.addAll(getLinks(s));
-        }
+        try {
+            Thread t[] = new Thread[news.length];
+            System.out.println("Getting Latest Links...");
 
-        for (String site : inUrls) {
-            UrlDetails ud = new UrlDetails(site);
-            database.add(ud);
+            for (int i = 0; i < t.length; i++) {
+                final int x = i;
+                t[x] = new Thread() {
+                    public void run() {
+                        HashSet<String> turls = getLinks(news[x]);
+                        HashSet<String> tinUrls = new HashSet<>();
 
-            try {
-                Thread.sleep(50);
-                printProgress(startTime, inUrls.size(), database.size());
-            } catch (InterruptedException e) {
+                        for (String s : turls) {
+                            tinUrls.add(s);
+                            if (tinUrls.size() < dataCount)
+                                tinUrls.addAll(getLinks(s));
+                        }
+                        inUrls.addAll(tinUrls);
+                    }
+                };
             }
+            for (Thread thread : t)
+                thread.start();
+
+            for (Thread thread : t)
+                thread.join();
+
+        } catch (Exception e) {
         }
+
+        ArrayList<String> siteList = new ArrayList<String>();
+        siteList.addAll(inUrls);
+        try {
+            fetchDatabase(database, startTime, inUrls, siteList);
+        } catch (Exception e) {
+        }
+        // for (String site : inUrls) {
+        // UrlDetails ud = new UrlDetails(site);
+        // database.add(ud);
+
+        // try {
+        // Thread.sleep(50);
+        // printProgress(startTime, inUrls.size(), database.size());
+        // } catch (InterruptedException e) {
+        // }
+        // }
 
         long eta = (System.currentTimeMillis() - startTime);
         String etaHms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
@@ -58,21 +77,43 @@ public class LoadData {
         return database;
     }
 
-    private static HashSet<String> importData(String filePath, int dataSize) {
-        HashSet<String> data = new HashSet<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            while ((line = reader.readLine()) != null && (dataSize == 0 || data.size() < dataSize))
-                data.add(line);
+    private static void fetchDatabase(HashSet<UrlDetails> database, long startTime, HashSet<String> inUrls,
+            ArrayList<String> siteList) throws Exception {
+        Thread td[] = new Thread[10];
+        final int cnt = siteList.size() / td.length;
 
-            reader.close();
-            return data;
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            return null;
+        for (int i = 0, start = 0, end = cnt; i < td.length; i++, start = end, end += cnt) {
+            final int x = i;
+            if (start < 0)
+                start = 0;
+            if (end >= siteList.size())
+                end = siteList.size() - 1;
+            final int fstart = start;
+            final int fend = end;
+
+            td[x] = new Thread() {
+
+                public void run() {
+                    for (int j = fstart; j < fend; j++) {
+                        final String site = siteList.get(j);
+                        UrlDetails ud = new UrlDetails(site);
+                        database.add(ud);
+
+                        try {
+                            Thread.sleep(50);
+                            printProgress(startTime, inUrls.size(), database.size());
+                        } catch (InterruptedException e) {
+                        }
+                    }
+
+                }
+            };
         }
-
+        for (Thread thread : td)
+            thread.start();
+        for (Thread thread : td)
+            thread.join();
+        Thread.sleep(50);
     }
 
     private static HashSet<String> getLinks(String url) {
@@ -83,11 +124,11 @@ public class LoadData {
             Document doc = Jsoup.connect(url).get();
             Elements elements = doc.select("a");
             for (Element element : elements) {
-                if (!element.absUrl("href").contains("#"))
+                if (!element.absUrl("href").contains("#") && urls.size() < (dataCount / 2))
                     urls.add(element.absUrl("href"));
             }
         } catch (Exception e) {
-            System.err.println("Cannot Load data: " + e.toString());
+            // System.err.println("Cannot Load data: " + e.toString());
         }
         return urls;
     }
@@ -104,12 +145,29 @@ public class LoadData {
         int percent = (int) (current * 100 / total);
         string.append('\r')
                 .append(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
-                .append(String.format(" %d%% [", percent)).append(String.join("", Collections.nCopies(percent, "=")))
-                .append('>').append(String.join("", Collections.nCopies(100 - percent, " "))).append(']')
+                .append(String.format(" %d%% ┤", percent)).append(String.join("", Collections.nCopies(percent, "█")))
+                .append('█').append(String.join("", Collections.nCopies(100 - percent, " "))).append('├')
                 .append(String.join("",
                         Collections.nCopies((int) (Math.log10(total)) - (int) (Math.log10(current)), " ")))
                 .append(String.format(" %d/%d, ETA: %s", current, total, etaHms));
 
         System.out.print(string);
     }
+
+    // private static HashSet<String> importData(String filePath, int dataSize) {
+    // HashSet<String> data = new HashSet<>();
+    // try {
+    // BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    // String line;
+    // while ((line = reader.readLine()) != null && (dataSize == 0 || data.size() <
+    // dataSize))
+    // data.add(line);
+
+    // reader.close();
+    // return data;
+    // } catch (IOException ioe) {
+    // return null;
+    // }
+
+    // }
 }

@@ -13,6 +13,6 @@ class UrlData {
 
     @Override
     public String toString() {
-        return points + " | " + title + "\n" + url + "\n";
+        return title + "\n" + url + "\n";
     }
 }
