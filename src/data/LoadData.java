@@ -7,10 +7,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
+import searchEngine.ConsoleHelper;
 import searchEngine.UrlDetails;
 
 public class LoadData {
-    static int dataCount = 1000;
+    static int dataCount = 200;
 
     public static HashSet<UrlDetails> getData() {
 
@@ -29,6 +30,7 @@ public class LoadData {
 
             for (int i = 0; i < t.length; i++) {
                 final int x = i;
+
                 t[x] = new Thread() {
                     public void run() {
                         HashSet<String> turls = getLinks(news[x]);
@@ -38,6 +40,8 @@ public class LoadData {
                             tinUrls.add(s);
                             if (tinUrls.size() < dataCount)
                                 tinUrls.addAll(getLinks(s));
+
+                            ConsoleHelper.animate(tinUrls.size() + " ");
                         }
                         inUrls.addAll(tinUrls);
                     }
@@ -58,28 +62,18 @@ public class LoadData {
             fetchDatabase(database, startTime, inUrls, siteList);
         } catch (Exception e) {
         }
-        // for (String site : inUrls) {
-        // UrlDetails ud = new UrlDetails(site);
-        // database.add(ud);
-
-        // try {
-        // Thread.sleep(50);
-        // printProgress(startTime, inUrls.size(), database.size());
-        // } catch (InterruptedException e) {
-        // }
-        // }
 
         long eta = (System.currentTimeMillis() - startTime);
         String etaHms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
                 TimeUnit.MILLISECONDS.toMinutes(eta) % TimeUnit.HOURS.toMinutes(1),
                 TimeUnit.MILLISECONDS.toSeconds(eta) % TimeUnit.MINUTES.toSeconds(1));
-        System.out.println("\nTotal Time Taken: " + etaHms);
+        System.out.println("\r\nTotal Time Taken: " + etaHms);
         return database;
     }
 
     private static void fetchDatabase(HashSet<UrlDetails> database, long startTime, HashSet<String> inUrls,
             ArrayList<String> siteList) throws Exception {
-        Thread td[] = new Thread[10];
+        Thread td[] = new Thread[siteList.size() > 250 ? 250 : siteList.size()];
         final int cnt = siteList.size() / td.length;
 
         for (int i = 0, start = 0, end = cnt; i < td.length; i++, start = end, end += cnt) {
@@ -101,7 +95,7 @@ public class LoadData {
 
                         try {
                             Thread.sleep(50);
-                            printProgress(startTime, inUrls.size(), database.size());
+                            ConsoleHelper.printProgress(startTime, inUrls.size(), database.size());
                         } catch (InterruptedException e) {
                         }
                     }
@@ -111,9 +105,10 @@ public class LoadData {
         }
         for (Thread thread : td)
             thread.start();
-        for (Thread thread : td)
+        for (Thread thread : td) {
             thread.join();
-        Thread.sleep(50);
+        }
+        ConsoleHelper.printProgress(startTime, inUrls.size(), inUrls.size());
     }
 
     private static HashSet<String> getLinks(String url) {
@@ -131,27 +126,6 @@ public class LoadData {
             // System.err.println("Cannot Load data: " + e.toString());
         }
         return urls;
-    }
-
-    private static void printProgress(long startTime, long total, long current) {
-        long eta = current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current;
-
-        String etaHms = current == 0 ? "N/A"
-                : String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
-                        TimeUnit.MILLISECONDS.toMinutes(eta) % TimeUnit.HOURS.toMinutes(1),
-                        TimeUnit.MILLISECONDS.toSeconds(eta) % TimeUnit.MINUTES.toSeconds(1));
-
-        StringBuilder string = new StringBuilder(140);
-        int percent = (int) (current * 100 / total);
-        string.append('\r')
-                .append(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
-                .append(String.format(" %d%% ┤", percent)).append(String.join("", Collections.nCopies(percent, "█")))
-                .append('█').append(String.join("", Collections.nCopies(100 - percent, " "))).append('├')
-                .append(String.join("",
-                        Collections.nCopies((int) (Math.log10(total)) - (int) (Math.log10(current)), " ")))
-                .append(String.format(" %d/%d, ETA: %s", current, total, etaHms));
-
-        System.out.print(string);
     }
 
     // private static HashSet<String> importData(String filePath, int dataSize) {
