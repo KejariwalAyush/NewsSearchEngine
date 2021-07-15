@@ -6,9 +6,6 @@ import java.util.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import data.LoadData;
-import spellCheck.SpellCheck;
-
 public class SearchEngine {
 	private static Node<UrlData> node;
 	private static int maxPts = Integer.MAX_VALUE;
@@ -34,13 +31,6 @@ public class SearchEngine {
 				break;
 			}
 
-			String correctedQuery = spellCheckSentence(query);
-			if (!query.trim().equalsIgnoreCase(correctedQuery.trim()))
-				System.out.println("Did you mean: " + correctedQuery);
-
-			System.out.println("Searching for: " + correctedQuery);
-			System.out.println();
-			correctedQuery = correctedQuery + " " + query;
 			for (UrlDetails ud : database) {
 				search(query, ud);
 			}
@@ -54,19 +44,6 @@ public class SearchEngine {
 		}
 
 		sc.close();
-	}
-
-	private static String spellCheckSentence(String query) {
-		SpellCheck spell = new SpellCheck();
-		StringBuilder manipulatedQuery = new StringBuilder();
-		StringTokenizer st = new StringTokenizer(query);
-		while (st.hasMoreTokens()) {
-			String temp = st.nextToken();
-			String validString = spell.validate(temp);
-			manipulatedQuery.append(validString);
-			manipulatedQuery.append(" ");
-		}
-		return manipulatedQuery.toString();
 	}
 
 	private static void search(String query, UrlDetails ud) {

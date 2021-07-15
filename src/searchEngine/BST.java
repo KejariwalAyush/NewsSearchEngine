@@ -1,10 +1,5 @@
 package searchEngine;
 
-class Node<T> {
-    UrlData data;
-    Node<UrlData> left, right;
-}
-
 class BST {
 
     public static Node<UrlData> createNode(UrlData k) {

@@ -1,4 +1,4 @@
-package data;
+package searchEngine;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -7,20 +7,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
-import searchEngine.ConsoleHelper;
-import searchEngine.UrlDetails;
-
 public class LoadData {
-    static int dataCount = 200;
+    static int dataCount = 100;
 
     public static HashSet<UrlDetails> getData() {
 
-        // HashSet<String> sites = importData("sites.txt", 0);
         HashSet<UrlDetails> database = new HashSet<>();
         long startTime = System.currentTimeMillis();
 
         String[] news = { "https://news.google.com/topstories", "https://www.bbc.com/", "https://edition.cnn.com/" };
-        // int in = 0;
 
         HashSet<String> inUrls = new HashSet<>();
 
@@ -123,25 +118,7 @@ public class LoadData {
                     urls.add(element.absUrl("href"));
             }
         } catch (Exception e) {
-            // System.err.println("Cannot Load data: " + e.toString());
         }
         return urls;
     }
-
-    // private static HashSet<String> importData(String filePath, int dataSize) {
-    // HashSet<String> data = new HashSet<>();
-    // try {
-    // BufferedReader reader = new BufferedReader(new FileReader(filePath));
-    // String line;
-    // while ((line = reader.readLine()) != null && (dataSize == 0 || data.size() <
-    // dataSize))
-    // data.add(line);
-
-    // reader.close();
-    // return data;
-    // } catch (IOException ioe) {
-    // return null;
-    // }
-
-    // }
 }

@@ -8,8 +8,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import spellCheck.MyDictionary;
-
 public class UrlDetails {
 	String url;
 	String content;
