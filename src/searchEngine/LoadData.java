@@ -8,7 +8,7 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
 public class LoadData {
-    static int dataCount = 100;
+    static int dataCount = 100; //limiting links to 100 from one particular site.
 
     public static HashSet<UrlDetails> getData() {
 
@@ -18,9 +18,13 @@ public class LoadData {
         //The links that the user gets will be fetched from these top news sites.
         String[] news = { "https://news.google.com/topstories", "https://www.bbc.com/", "https://edition.cnn.com/" };
 
-        HashSet<String> inUrls = new HashSet<>();
+        HashSet<String> inUrls = new HashSet<>(); // using hashset to eliminate duplicate links 
 
         try {
+            /*
+            *Threads are being used to process multiple data at the same time. Doing this optimises
+            *the overall running time for loading data. 
+            */
             Thread t[] = new Thread[news.length];
             System.out.println("Getting Latest Links...");
 
@@ -28,7 +32,7 @@ public class LoadData {
                 final int x = i;
                 
 
-                //using 250 links at a time to speed up the process of loading data
+                //using 200 links at a time to speed up the process of loading data. 
                 t[x] = new Thread() {
                     public void run() {
                         HashSet<String> turls = getLinks(news[x]);
@@ -60,7 +64,8 @@ public class LoadData {
             fetchDatabase(database, startTime, inUrls, siteList);
         } catch (Exception e) {
         }
-
+        
+        // eta= total loading time for data. 
         long eta = (System.currentTimeMillis() - startTime);
         String etaHms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
                 TimeUnit.MILLISECONDS.toMinutes(eta) % TimeUnit.HOURS.toMinutes(1),
@@ -71,6 +76,14 @@ public class LoadData {
 
     private static void fetchDatabase(HashSet<UrlDetails> database, long startTime, HashSet<String> inUrls,
             ArrayList<String> siteList) throws Exception {
+                
+            /*
+            * All the urls that are being loaded are now divided for different threads to use
+            * if the total number of links generated are less than 200 one thread per link is 
+            * provided accordingly. If more than 200 links are there then the the total number is being 
+            * divided and then the links are being divided in the threads accordingly. 
+            */
+
         Thread td[] = new Thread[siteList.size() > 250 ? 250 : siteList.size()];
         final int cnt = siteList.size() / td.length;
 
