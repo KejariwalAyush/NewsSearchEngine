@@ -12,9 +12,10 @@ public class LoadData {
 
     public static HashSet<UrlDetails> getData() {
 
-        HashSet<UrlDetails> database = new HashSet<>();
-        long startTime = System.currentTimeMillis();
-
+        HashSet<UrlDetails> database = new HashSet<>();  //Not an actual database but a hashSet that works 
+        long startTime = System.currentTimeMillis();     //as a base where all data(links) are stored
+        
+        //The links that the user gets will be fetched from these top news sites.
         String[] news = { "https://news.google.com/topstories", "https://www.bbc.com/", "https://edition.cnn.com/" };
 
         HashSet<String> inUrls = new HashSet<>();
@@ -25,7 +26,9 @@ public class LoadData {
 
             for (int i = 0; i < t.length; i++) {
                 final int x = i;
+                
 
+                //using 250 links at a time to speed up the process of loading data
                 t[x] = new Thread() {
                     public void run() {
                         HashSet<String> turls = getLinks(news[x]);
@@ -52,7 +55,7 @@ public class LoadData {
         }
 
         ArrayList<String> siteList = new ArrayList<String>();
-        siteList.addAll(inUrls);
+        siteList.addAll(inUrls); //arraylist in which the hashset having all the urls has been copied
         try {
             fetchDatabase(database, startTime, inUrls, siteList);
         } catch (Exception e) {
