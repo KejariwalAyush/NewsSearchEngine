@@ -43,7 +43,6 @@ public class MyDictionary {
 		}
 	}
 
-	// this method is used in my unit tests
 	public String[] getRandomEntries(int num) {
 		String[] toRet = new String[num];
 		for (int i = 0; i < num; i++) {

@@ -3,6 +3,10 @@ package searchEngine;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
 
+
+//This class is responsible for generating animation in the console while
+//data is being loaded
+
 public class ConsoleHelper {
     private static String lastLine = "";
     private static byte anim;
@@ -40,16 +44,22 @@ public class ConsoleHelper {
     }
 
     public static void printProgress(long startTime, long total, long current) {
-        long eta = current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current;
 
+        // formula to estimate time for loading data. 
+        long eta = current == 0 ? 0 : (total - current) * (System.currentTimeMillis() - startTime) / current;
+        
+        // formatting the eta time in hh:mm:ss
         String etaHms = current == 0 ? "N/A"
                 : String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(eta),
                         TimeUnit.MILLISECONDS.toMinutes(eta) % TimeUnit.HOURS.toMinutes(1),
                         TimeUnit.MILLISECONDS.toSeconds(eta) % TimeUnit.MINUTES.toSeconds(1));
 
-        StringBuilder string = new StringBuilder(140);
+        StringBuilder string = new StringBuilder(140); 
+
+        // calculating percentage. This percentage is the input variable for the animation 
         int percent = (int) (current * 100 / total);
-        string.append('\r')
+        // '\r' - return catridge. It acts as a tool for helping text dissapear. 
+        string.append('\r') 
                 .append(String.join("", Collections.nCopies(percent == 0 ? 2 : 2 - (int) (Math.log10(percent)), " ")))
                 .append(String.format(" %d%% ┤", percent)).append(String.join("", Collections.nCopies(percent, "█")))
                 .append('█').append(String.join("", Collections.nCopies(100 - percent, " "))).append('├')
