@@ -2,7 +2,7 @@ package searchEngine;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
+
 
 public class MyDictionary {
 	private int M = 1319; // prime number
@@ -38,8 +38,8 @@ public class MyDictionary {
 				add(line);
 			}
 			reader.close();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch (Exception e) {
+			
 		}
 	}
 
