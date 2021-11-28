@@ -8,6 +8,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+// Ayush Kejariwal
+// 1941012408
+// CSE-D
+
 public class UrlDetails {
 	String url;
 	String content;

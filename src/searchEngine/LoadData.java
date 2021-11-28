@@ -7,8 +7,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 
+// Ayush Kejariwal
+// 1941012408
+// CSE-D
+
 public class LoadData {
-    static int dataCount = 100; // limiting links to 100 from one particular site.
+    static int dataCount = 150; // limiting links to 100 from one particular site.
 
     public static HashSet<UrlDetails> getData() {
 

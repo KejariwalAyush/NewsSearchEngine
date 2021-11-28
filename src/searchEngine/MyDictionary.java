@@ -3,6 +3,9 @@ package searchEngine;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+// Ayush Kejariwal
+// 1941012408
+// CSE-D
 
 public class MyDictionary {
 	private int M = 1319; // prime number
@@ -39,7 +42,7 @@ public class MyDictionary {
 			}
 			reader.close();
 		} catch (Exception e) {
-			
+
 		}
 	}
 
